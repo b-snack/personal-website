@@ -1,15 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Github, Linkedin, Instagram, Hash, CheckCircle2, Circle } from 'lucide-react';
+import { Github, Linkedin, Instagram, Hash, CheckCircle2, Circle, Music } from 'lucide-react';
 
 export default function SebastianPortfolio() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [solvesToday] = useState(42);
   const [algProgress] = useState({ learned: 43, total: 57, type: 'OLLs' });
   const [todos, setTodos] = useState([
-    { id: 1, text: 'Master all OLL algorithms', done: false },
+    { id: 1, text: 'placeholder', done: false },
     { id: 2, text: 'Build personal website', done: true },
-    { id: 3, text: 'Add more goals here...', done: false }
+    { id: 3, text: 'placehodler', done: false }
   ]);
+
+  // Last.fm State
+  const [lastfmTrack, setLastfmTrack] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   // Click Speed Test State
   const [clicks, setClicks] = useState(0);
@@ -18,6 +22,35 @@ export default function SebastianPortfolio() {
   const [bestCPS, setBestCPS] = useState(0);
   const [testComplete, setTestComplete] = useState(false);
   const [ripples, setRipples] = useState([]);
+
+  // Fetch Last.fm data
+  useEffect(() => {
+    const fetchLastfm = async () => {
+      try {
+        const response = await fetch(
+          `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=bbbbsnack&api_key=6b3ea757852cb033acc6701bbe2987ab&format=json&limit=1`
+        );
+        const data = await response.json();
+        
+        if (data.recenttracks && data.recenttracks.track && data.recenttracks.track[0]) {
+          const track = data.recenttracks.track[0];
+          setLastfmTrack({
+            name: track.name,
+            artist: track.artist['#text'],
+            album: track.album['#text'],
+            image: track.image[3]['#text'], // largest image
+          });
+          setIsPlaying(track['@attr']?.nowplaying === 'true');
+        }
+      } catch (error) {
+        console.error('Error fetching Last.fm data:', error);
+      }
+    };
+
+    fetchLastfm();
+    const interval = setInterval(fetchLastfm, 30000); // Update every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     let timer;
@@ -45,7 +78,6 @@ export default function SebastianPortfolio() {
     if (isTestActive) {
       setClicks(prev => prev + 1);
       
-      // Create ripple effect with correct positioning
       const rect = e.currentTarget.getBoundingClientRect();
       const x = ((e.clientX - rect.left) / rect.width) * 100;
       const y = ((e.clientY - rect.top) / rect.height) * 100;
@@ -128,14 +160,12 @@ export default function SebastianPortfolio() {
           opacity: 1;
         }
 
-        /* Grid spans */
         .span-2 { grid-column: span 2; }
         .span-3 { grid-column: span 3; }
         .span-4 { grid-column: span 4; }
         .row-2 { grid-row: span 2; }
         .row-3 { grid-row: span 3; }
 
-        /* Typography */
         .label {
           font-size: 11px;
           font-weight: 600;
@@ -159,7 +189,6 @@ export default function SebastianPortfolio() {
           color: #a3a3a3;
         }
 
-        /* Progress bar */
         .progress-track {
           height: 6px;
           background: #f5f5f5;
@@ -174,7 +203,6 @@ export default function SebastianPortfolio() {
           transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Social icons */
         .social-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
@@ -220,7 +248,6 @@ export default function SebastianPortfolio() {
           margin-top: 2px;
         }
 
-        /* Status indicator */
         .status-dot {
           width: 8px;
           height: 8px;
@@ -236,7 +263,6 @@ export default function SebastianPortfolio() {
           50% { opacity: 0.5; }
         }
 
-        /* Todo list */
         .todo-item {
           display: flex;
           align-items: center;
@@ -271,7 +297,6 @@ export default function SebastianPortfolio() {
           color: #22c55e;
         }
 
-        /* Cubing stats grid */
         .cubing-stats {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
@@ -302,7 +327,6 @@ export default function SebastianPortfolio() {
           letter-spacing: -0.02em;
         }
 
-        /* Click Speed Test */
         .click-test-container {
           display: flex;
           flex-direction: column;
@@ -413,22 +437,6 @@ export default function SebastianPortfolio() {
           text-align: center;
         }
 
-        .stat-label {
-          font-size: 9px;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #a3a3a3;
-          margin-bottom: 4px;
-        }
-
-        .stat-value {
-          font-size: 20px;
-          font-weight: 700;
-          color: #171717;
-          letter-spacing: -0.02em;
-        }
-
         .test-button {
           background: #171717;
           color: white;
@@ -469,80 +477,78 @@ export default function SebastianPortfolio() {
           }
         }
 
-        @keyframes ripple-expand {
-          from {
-            width: 0;
-            height: 0;
-            opacity: 1;
-          }
-          to {
-            width: 100px;
-            height: 100px;
-            opacity: 0;
-          }
+        /* Last.fm Music Card Styles */
+        .music-card-content {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+          flex: 1;
         }
 
-        .click-count {
-          font-size: 64px;
-          font-weight: 800;
-          color: #171717;
-          line-height: 1;
-          letter-spacing: -0.03em;
+        .album-art {
+          width: 80px;
+          height: 80px;
+          border-radius: 12px;
+          object-fit: cover;
+          border: 1px solid #e5e5e5;
+          background: #fafafa;
         }
 
-        .click-prompt {
-          font-size: 12px;
+        .music-info {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .track-name {
+          font-size: 16px;
           font-weight: 600;
+          color: #171717;
+          margin-bottom: 4px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .artist-name {
+          font-size: 14px;
           color: #737373;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .playing-indicator {
+          display: flex;
+          align-items: center;
+          gap: 6px;
           margin-top: 8px;
+        }
+
+        .playing-dot {
+          width: 6px;
+          height: 6px;
+          background: #22c55e;
+          border-radius: 50%;
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        .playing-text {
+          font-size: 10px;
+          font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.1em;
+          color: #22c55e;
         }
 
-        .stat-box {
-          background: #fafafa;
-          border: 1px solid #e5e5e5;
-          border-radius: 10px;
-          padding: 8px;
-          text-align: center;
-        }
-
-        .stat-label {
-          font-size: 9px;
+        .last-played-text {
+          font-size: 10px;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.1em;
           color: #a3a3a3;
-          margin-bottom: 4px;
+          margin-top: 8px;
         }
 
-        .stat-value {
-          font-size: 20px;
-          font-weight: 700;
-          color: #171717;
-          letter-spacing: -0.02em;
-        }
-
-        .test-button {
-          background: #171717;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          padding: 8px 20px;
-          font-size: 11px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          width: 100%;
-        }
-
-        .test-button:hover {
-          background: #404040;
-        }
-
-        /* Animations */
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -566,6 +572,7 @@ export default function SebastianPortfolio() {
         .bento-card:nth-child(6) { animation-delay: 0.3s; }
         .bento-card:nth-child(7) { animation-delay: 0.35s; }
         .bento-card:nth-child(8) { animation-delay: 0.4s; }
+        .bento-card:nth-child(9) { animation-delay: 0.45s; }
       `}</style>
 
       <div className="bento-container">
@@ -703,6 +710,43 @@ export default function SebastianPortfolio() {
               <div style={{ height: '34px' }} />
             )}
           </div>
+        </div>
+
+        {/* Last.fm Now Playing / Last Played */}
+        <div className="bento-card span-2">
+          <div className="label">
+            {isPlaying ? '🎵 Now Playing' : 'Last Played'}
+          </div>
+          {lastfmTrack ? (
+            <div className="music-card-content">
+              {lastfmTrack.image && (
+                <img 
+                  src={lastfmTrack.image} 
+                  alt="Album art"
+                  className="album-art"
+                />
+              )}
+              <div className="music-info">
+                <div className="track-name">{lastfmTrack.name}</div>
+                <div className="artist-name">{lastfmTrack.artist}</div>
+                {isPlaying && (
+                  <div className="playing-indicator">
+                    <div className="playing-dot"></div>
+                    <div className="playing-text">Playing Now</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <p style={{ 
+              fontSize: '14px', 
+              color: '#a3a3a3', 
+              fontStyle: 'italic',
+              margin: 'auto 0'
+            }}>
+              Loading music...
+            </p>
+          )}
         </div>
 
         {/* Clock */}
