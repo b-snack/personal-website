@@ -123,7 +123,7 @@ export default function SebastianPortfolio() {
           display: grid;
           grid-template-columns: repeat(6, 1fr);
           gap: 16px;
-          grid-auto-rows: 160px;
+          grid-auto-rows: 175px;
         }
 
         .bento-card {
@@ -387,7 +387,7 @@ export default function SebastianPortfolio() {
 
       <div className="bento-container">
         {/* Hero - Main intro */}
-        <div className="bento-card span-4 row-2" style={{ justifyContent: 'space-between' }}>
+        <div className="bento-card span-4 row-2">
           <div>
             <div className="label">
               <span className="status-dot"></span>
