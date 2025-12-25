@@ -11,96 +11,64 @@ export default function SebastianPortfolio() {
     { id: 3, text: 'Add more goals here...', done: false }
   ]);
 
-  // Snake Game State
-  const [snake, setSnake] = useState([[5, 5]]);
-  const [food, setFood] = useState([10, 10]);
-  const [direction, setDirection] = useState('RIGHT');
-  const [gameOver, setGameOver] = useState(false);
-  const [score, setScore] = useState(0);
-  const GRID_SIZE = 15;
+  // Click Speed Test State
+  const [clicks, setClicks] = useState(0);
+  const [isTestActive, setIsTestActive] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(5);
+  const [bestCPS, setBestCPS] = useState(0);
+  const [testComplete, setTestComplete] = useState(false);
+  const [ripples, setRipples] = useState([]);
+
+  useEffect(() => {
+    let timer;
+    if (isTestActive && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 0.01) {
+            setIsTestActive(false);
+            setTestComplete(true);
+            const cps = clicks / 5;
+            if (cps > bestCPS) setBestCPS(cps);
+            return 0;
+          }
+          return prev - 0.01;
+        });
+      }, 10);
+    }
+    return () => clearInterval(timer);
+  }, [isTestActive, timeLeft, clicks, bestCPS]);
+
+  const handleTestClick = (e) => {
+    if (!isTestActive && !testComplete) {
+      setIsTestActive(true);
+    }
+    if (isTestActive) {
+      setClicks(prev => prev + 1);
+      
+      // Create ripple effect
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const newRipple = { x, y, id: Date.now() };
+      setRipples(prev => [...prev, newRipple]);
+      setTimeout(() => {
+        setRipples(prev => prev.filter(r => r.id !== newRipple.id));
+      }, 600);
+    }
+  };
+
+  const resetTest = () => {
+    setClicks(0);
+    setIsTestActive(false);
+    setTimeLeft(5);
+    setTestComplete(false);
+    setRipples([]);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
-
-  // Snake Game Logic
-  useEffect(() => {
-    if (gameOver) return;
-
-    const moveSnake = () => {
-      const newSnake = [...snake];
-      const head = [...newSnake[0]];
-
-      switch (direction) {
-        case 'UP': head[1] -= 1; break;
-        case 'DOWN': head[1] += 1; break;
-        case 'LEFT': head[0] -= 1; break;
-        case 'RIGHT': head[0] += 1; break;
-      }
-
-      // Check wall collision
-      if (head[0] < 0 || head[0] >= GRID_SIZE || head[1] < 0 || head[1] >= GRID_SIZE) {
-        setGameOver(true);
-        return;
-      }
-
-      // Check self collision
-      if (newSnake.some(segment => segment[0] === head[0] && segment[1] === head[1])) {
-        setGameOver(true);
-        return;
-      }
-
-      newSnake.unshift(head);
-
-      // Check food collision
-      if (head[0] === food[0] && head[1] === food[1]) {
-        setScore(score + 1);
-        setFood([
-          Math.floor(Math.random() * GRID_SIZE),
-          Math.floor(Math.random() * GRID_SIZE)
-        ]);
-      } else {
-        newSnake.pop();
-      }
-
-      setSnake(newSnake);
-    };
-
-    const gameInterval = setInterval(moveSnake, 150);
-    return () => clearInterval(gameInterval);
-  }, [snake, direction, food, gameOver, score]);
-
-  const handleKeyPress = useCallback((e) => {
-    e.preventDefault();
-    switch (e.key) {
-      case 'ArrowUp':
-        if (direction !== 'DOWN') setDirection('UP');
-        break;
-      case 'ArrowDown':
-        if (direction !== 'UP') setDirection('DOWN');
-        break;
-      case 'ArrowLeft':
-        if (direction !== 'RIGHT') setDirection('LEFT');
-        break;
-      case 'ArrowRight':
-        if (direction !== 'LEFT') setDirection('RIGHT');
-        break;
-    }
-  }, [direction]);
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [handleKeyPress]);
-
-  const resetGame = () => {
-    setSnake([[5, 5]]);
-    setFood([10, 10]);
-    setDirection('RIGHT');
-    setGameOver(false);
-    setScore(0);
-  };
 
   const toggleTodo = (id) => {
     setTodos(todos.map(todo => 
@@ -252,31 +220,6 @@ export default function SebastianPortfolio() {
           margin-top: 2px;
         }
 
-        /* Snake Game */
-        .snake-grid {
-          display: grid;
-          grid-template-columns: repeat(${GRID_SIZE}, 1fr);
-          gap: 2px;
-          background: #f5f5f5;
-          padding: 8px;
-          border-radius: 12px;
-          aspect-ratio: 1;
-          margin-bottom: 12px;
-        }
-
-        .snake-cell {
-          background: white;
-          border-radius: 2px;
-        }
-
-        .snake-cell.snake {
-          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-        }
-
-        .snake-cell.food {
-          background: #ef4444;
-        }
-
         /* Status indicator */
         .status-dot {
           width: 8px;
@@ -357,6 +300,139 @@ export default function SebastianPortfolio() {
           font-weight: 700;
           color: #171717;
           letter-spacing: -0.02em;
+        }
+
+        /* Click Speed Test */
+        .click-test-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-between;
+          height: 100%;
+          padding: 8px 0;
+        }
+
+        .click-area {
+          width: 100%;
+          height: 180px;
+          background: white;
+          border: 3px solid #e5e5e5;
+          border-radius: 16px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          user-select: none;
+          transition: all 0.1s;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .click-area:hover {
+          border-color: #d4d4d4;
+        }
+
+        .click-area:active {
+          transform: scale(0.98);
+        }
+
+        .click-area.active {
+          border-color: #3b82f6;
+          background: #fafafa;
+        }
+
+        .click-area.complete {
+          border-color: #22c55e;
+          background: #f0fdf4;
+        }
+
+        .click-ripple {
+          position: absolute;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(59, 130, 246, 0) 70%);
+          pointer-events: none;
+          animation: ripple-expand 0.6s ease-out;
+        }
+
+        @keyframes ripple-expand {
+          from {
+            width: 0;
+            height: 0;
+            opacity: 1;
+          }
+          to {
+            width: 100px;
+            height: 100px;
+            opacity: 0;
+          }
+        }
+
+        .click-count {
+          font-size: 64px;
+          font-weight: 800;
+          color: #171717;
+          line-height: 1;
+          letter-spacing: -0.03em;
+        }
+
+        .click-prompt {
+          font-size: 12px;
+          font-weight: 600;
+          color: #737373;
+          margin-top: 8px;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+
+        .test-stats {
+          width: 100%;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+
+        .stat-box {
+          background: #fafafa;
+          border: 1px solid #e5e5e5;
+          border-radius: 10px;
+          padding: 8px;
+          text-align: center;
+        }
+
+        .stat-label {
+          font-size: 9px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #a3a3a3;
+          margin-bottom: 4px;
+        }
+
+        .stat-value {
+          font-size: 20px;
+          font-weight: 700;
+          color: #171717;
+          letter-spacing: -0.02em;
+        }
+
+        .test-button {
+          background: #171717;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 8px 20px;
+          font-size: 11px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          width: 100%;
+        }
+
+        .test-button:hover {
+          background: #404040;
         }
 
         /* Animations */
@@ -467,47 +543,57 @@ export default function SebastianPortfolio() {
             </div>
           </div>
         </div>
-
-        {/* Snake Game */}
-        <div className="bento-card span-2 row-2" style={{ padding: '20px' }}>
-          <div style={{ fontSize: '11px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#737373', marginBottom: '12px' }}>
-            Snake Game • Score: {score}
-          </div>
-          <div className="snake-grid">
-            {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, i) => {
-              const x = i % GRID_SIZE;
-              const y = Math.floor(i / GRID_SIZE);
-              const isSnake = snake.some(s => s[0] === x && s[1] === y);
-              const isFood = food[0] === x && food[1] === y;
-              return (
-                <div 
-                  key={i} 
-                  className={`snake-cell ${isSnake ? 'snake' : ''} ${isFood ? 'food' : ''}`}
+        {/* Click Speed Test */}
+        <div className="bento-card span-2 row-2" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
+          <div className="label" style={{ marginBottom: '12px' }}>Click Speed Test</div>
+          
+          <div className="click-test-container">
+            <div 
+              className={`click-area ${isTestActive ? 'active' : ''} ${testComplete ? 'complete' : ''}`}
+              onClick={handleTestClick}
+            >
+              {ripples.map(ripple => (
+                <div
+                  key={ripple.id}
+                  className="click-ripple"
+                  style={{
+                    left: ripple.x - 50,
+                    top: ripple.y - 50,
+                  }}
                 />
-              );
-            })}
-          </div>
-          {gameOver && (
-            <div style={{ textAlign: 'center', marginTop: 'auto' }}>
-              <button 
-                onClick={resetGame}
-                style={{
-                  background: '#171717',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  padding: '10px 20px',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
-              >
-                Play Again
-              </button>
+              ))}
+              <div className="click-count">{clicks}</div>
+              <div className="click-prompt">
+                {!isTestActive && !testComplete && 'Click to Start'}
+                {isTestActive && 'Keep Clicking!'}
+                {testComplete && 'Complete!'}
+              </div>
             </div>
-          )}
-          <div style={{ fontSize: '10px', color: '#a3a3a3', textAlign: 'center', marginTop: '8px' }}>
-            Use arrow keys to play
+
+            <div className="test-stats">
+              <div className="stat-box">
+                <div className="stat-label">Time</div>
+                <div className="stat-value">{timeLeft.toFixed(2)}s</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-label">CPS</div>
+                <div className="stat-value">
+                  {isTestActive || testComplete ? (clicks / (5 - timeLeft)).toFixed(1) : '0.0'}
+                </div>
+              </div>
+            </div>
+
+            {testComplete ? (
+              <button className="test-button" onClick={resetTest}>
+                Try Again
+              </button>
+            ) : bestCPS > 0 ? (
+              <div style={{ fontSize: '10px', color: '#737373', textAlign: 'center', width: '100%' }}>
+                Best: {bestCPS.toFixed(1)} CPS
+              </div>
+            ) : (
+              <div style={{ height: '34px' }} />
+            )}
           </div>
         </div>
 
