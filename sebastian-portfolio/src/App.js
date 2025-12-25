@@ -45,10 +45,10 @@ export default function SebastianPortfolio() {
     if (isTestActive) {
       setClicks(prev => prev + 1);
       
-      // Create ripple effect
+      // Create ripple effect with correct positioning
       const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
       const newRipple = { x, y, id: Date.now() };
       setRipples(prev => [...prev, newRipple]);
       setTimeout(() => {
@@ -87,7 +87,7 @@ export default function SebastianPortfolio() {
 
         .bento-container {
           max-width: 1200px;
-          margin: 0 auto;
+          margin: 40px auto 0 auto;
           display: grid;
           grid-template-columns: repeat(6, 1fr);
           gap: 16px;
@@ -282,21 +282,21 @@ export default function SebastianPortfolio() {
         .stat-card {
           background: #fafafa;
           border-radius: 16px;
-          padding: 20px;
+          padding: 24px;
           border: 1px solid #f0f0f0;
         }
 
         .stat-label {
-          font-size: 10px;
+          font-size: 11px;
           font-weight: 600;
           letter-spacing: 0.1em;
           text-transform: uppercase;
           color: #a3a3a3;
-          margin-bottom: 8px;
+          margin-bottom: 10px;
         }
 
         .stat-value {
-          font-size: 40px;
+          font-size: 48px;
           font-weight: 700;
           color: #171717;
           letter-spacing: -0.02em;
@@ -310,6 +310,27 @@ export default function SebastianPortfolio() {
           justify-content: space-between;
           height: 100%;
           padding: 8px 0;
+        }
+
+        .test-stats {
+          width: 100%;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+          transition: all 0.3s ease;
+          margin: 4px 0;
+        }
+
+        .test-stats.first-load {
+          margin-top: 20px;
+        }
+
+        .test-stats.first-load .stat-box {
+          padding: 12px;
+        }
+
+        .test-stats.first-load .stat-value {
+          font-size: 24px;
         }
 
         .click-area {
@@ -349,10 +370,103 @@ export default function SebastianPortfolio() {
 
         .click-ripple {
           position: absolute;
+          width: 100px;
+          height: 100px;
+          margin-left: -50px;
+          margin-top: -50px;
           border-radius: 50%;
           background: radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, rgba(59, 130, 246, 0) 70%);
           pointer-events: none;
+          transform: scale(0);
           animation: ripple-expand 0.6s ease-out;
+        }
+
+        @keyframes ripple-expand {
+          to {
+            transform: scale(2);
+            opacity: 0;
+          }
+        }
+
+        .click-count {
+          font-size: 64px;
+          font-weight: 800;
+          color: #171717;
+          line-height: 1;
+          letter-spacing: -0.03em;
+        }
+
+        .click-prompt {
+          font-size: 12px;
+          font-weight: 600;
+          color: #737373;
+          margin-top: 8px;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+        }
+
+        .stat-box {
+          background: #fafafa;
+          border: 1px solid #e5e5e5;
+          border-radius: 10px;
+          padding: 8px;
+          text-align: center;
+        }
+
+        .stat-label {
+          font-size: 9px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #a3a3a3;
+          margin-bottom: 4px;
+        }
+
+        .stat-value {
+          font-size: 20px;
+          font-weight: 700;
+          color: #171717;
+          letter-spacing: -0.02em;
+        }
+
+        .test-button {
+          background: #171717;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 8px 20px;
+          font-size: 11px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          width: 100%;
+        }
+
+        .test-button:hover {
+          background: #404040;
+        }
+
+        .best-score {
+          font-size: 10px;
+          color: #737373;
+          text-align: center;
+          width: 100%;
+          opacity: 0;
+          animation: fadeInUp 0.4s ease forwards;
+          animation-delay: 0.1s;
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
         @keyframes ripple-expand {
@@ -383,13 +497,6 @@ export default function SebastianPortfolio() {
           margin-top: 8px;
           text-transform: uppercase;
           letter-spacing: 0.1em;
-        }
-
-        .test-stats {
-          width: 100%;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 8px;
         }
 
         .stat-box {
@@ -543,6 +650,7 @@ export default function SebastianPortfolio() {
             </div>
           </div>
         </div>
+
         {/* Click Speed Test */}
         <div className="bento-card span-2 row-2" style={{ padding: '20px', display: 'flex', flexDirection: 'column' }}>
           <div className="label" style={{ marginBottom: '12px' }}>Click Speed Test</div>
@@ -557,8 +665,8 @@ export default function SebastianPortfolio() {
                   key={ripple.id}
                   className="click-ripple"
                   style={{
-                    left: ripple.x - 50,
-                    top: ripple.y - 50,
+                    left: `${ripple.x}%`,
+                    top: `${ripple.y}%`,
                   }}
                 />
               ))}
@@ -570,7 +678,7 @@ export default function SebastianPortfolio() {
               </div>
             </div>
 
-            <div className="test-stats">
+            <div className={`test-stats ${bestCPS === 0 && !testComplete ? 'first-load' : ''}`}>
               <div className="stat-box">
                 <div className="stat-label">Time</div>
                 <div className="stat-value">{timeLeft.toFixed(2)}s</div>
@@ -588,7 +696,7 @@ export default function SebastianPortfolio() {
                 Try Again
               </button>
             ) : bestCPS > 0 ? (
-              <div style={{ fontSize: '10px', color: '#737373', textAlign: 'center', width: '100%' }}>
+              <div className="best-score">
                 Best: {bestCPS.toFixed(1)} CPS
               </div>
             ) : (
@@ -682,13 +790,13 @@ export default function SebastianPortfolio() {
             </div>
             <div className="stat-card">
               <div className="stat-label">Avg Solve</div>
-              <div style={{ fontSize: '16px', color: '#a3a3a3', fontStyle: 'italic', marginTop: '8px' }}>
+              <div style={{ fontSize: '18px', color: '#a3a3a3', fontStyle: 'italic', marginTop: '8px' }}>
                 Connect csTimer...
               </div>
             </div>
             <div className="stat-card">
               <div className="stat-label">Personal Best</div>
-              <div style={{ fontSize: '16px', color: '#a3a3a3', fontStyle: 'italic', marginTop: '8px' }}>
+              <div style={{ fontSize: '18px', color: '#a3a3a3', fontStyle: 'italic', marginTop: '8px' }}>
                 Add your PB...
               </div>
             </div>
