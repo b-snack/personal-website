@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Github, Linkedin, Instagram, Hash, CheckCircle2, Circle, Music } from 'lucide-react';
+import { Github, Linkedin, Instagram, Hash, CheckCircle2, Circle, Music, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function SebastianPortfolio() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -14,6 +14,9 @@ export default function SebastianPortfolio() {
   // Last.fm State
   const [lastfmTrack, setLastfmTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+
+  // Weather State
+  const [weather, setWeather] = useState(null);
 
   // Click Speed Test State
   const [clicks, setClicks] = useState(0);
@@ -48,9 +51,42 @@ export default function SebastianPortfolio() {
     };
 
     fetchLastfm();
-    const interval = setInterval(fetchLastfm, 30000); // Update every 30 seconds
+    const interval = setInterval(fetchLastfm, 300); // Update every 30 seconds
     return () => clearInterval(interval);
   }, []);
+
+  // Fetch Weather data
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        // Using Open-Meteo API (no key required)
+        const response = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=45.4215&longitude=-75.6972&current=temperature_2m,weather_code&temperature_unit=celsius`
+        );
+        const data = await response.json();
+        
+        setWeather({
+          temp: Math.round(data.current.temperature_2m),
+          code: data.current.weather_code
+        });
+      } catch (error) {
+        console.error('Error fetching weather:', error);
+      }
+    };
+
+    fetchWeather();
+    const interval = setInterval(fetchWeather, 600000); // Update every 10 minutes
+    return () => clearInterval(interval);
+  }, []);
+
+  const getWeatherEmoji = (code) => {
+    if (code === 0) return '☀️';
+    if (code <= 3) return '⛅';
+    if (code <= 67) return '🌧️';
+    if (code <= 77) return '🌨️';
+    if (code <= 99) return '⛈️';
+    return '🌤️';
+  };
 
   useEffect(() => {
     let timer;
@@ -124,6 +160,15 @@ export default function SebastianPortfolio() {
           grid-template-columns: repeat(6, 1fr);
           gap: 16px;
           grid-auto-rows: 175px;
+        }
+
+        .row-3-small {
+          grid-row: span 3;
+          height: 460px; /* Adjust this - normal would be 3 × 175 = 525px */
+        }
+
+        .bottom-row {
+          margin-top: -28px;
         }
 
         .bento-card {
@@ -477,6 +522,36 @@ export default function SebastianPortfolio() {
           }
         }
 
+        /* Skills/Languages */
+        .skill-item {
+          background: #fafafa;
+          border: 1px solid #e5e5e5;
+          border-radius: 12px;
+          padding: 16px;
+          margin-bottom: 12px;
+          transition: all 0.2s;
+        }
+
+        .skill-item:hover {
+          background: #f5f5f5;
+          border-color: #d4d4d4;
+          transform: translateX(4px);
+        }
+
+        .skill-name {
+          font-size: 15px;
+          font-weight: 600;
+          color: #171717;
+          margin-bottom: 4px;
+        }
+
+        .skill-level {
+          font-size: 11px;
+          color: #a3a3a3;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        }
+
         /* Last.fm Music Card Styles */
         .music-card-content {
           display: flex;
@@ -547,6 +622,33 @@ export default function SebastianPortfolio() {
           letter-spacing: 0.1em;
           color: #a3a3a3;
           margin-top: 8px;
+        }
+
+        /* Resume Download */
+        .download-btn {
+          background: #171717;
+          color: white;
+          border: none;
+          border-radius: 12px;
+          padding: 20px;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-align: center;
+          width: 100%;
+          margin-top: auto;
+        }
+
+        .download-btn:hover {
+          background: #404040;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .download-icon {
+          font-size: 32px;
+          margin-bottom: 8px;
         }
 
         @keyframes fadeIn {
@@ -712,6 +814,49 @@ export default function SebastianPortfolio() {
           </div>
         </div>
 
+        {/* Clock */}
+        <div className="bento-card span-2">
+          <div className="label">Current Time</div>
+          <div className="metric" style={{ fontSize: '48px' }}>
+            {currentTime.toLocaleTimeString('en-US', { 
+              hour: '2-digit', 
+              minute: '2-digit',
+              hour12: false 
+            })}
+          </div>
+          <p style={{ fontSize: '14px', color: '#a3a3a3', marginTop: '8px' }}>
+            {currentTime.toLocaleDateString('en-US', { 
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric'
+            })}
+          </p>
+        </div>
+
+        {/* Weather */}
+        <div className="bento-card span-2">
+          <div className="label">Weather in Ottawa</div>
+          {weather ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+              <div style={{ fontSize: '64px', lineHeight: 1 }}>
+                {getWeatherEmoji(weather.code)}
+              </div>
+              <div>
+                <div className="metric" style={{ fontSize: '56px' }}>
+                  {weather.temp}°C
+                </div>
+                {/* <p style={{ fontSize: '14px', color: '#a3a3a3', marginTop: '4px' }}>
+                  Celsius
+                </p> */}
+              </div>
+            </div>
+          ) : (
+            <p style={{ fontSize: '16px', color: '#a3a3a3', fontStyle: 'italic', margin: 'auto 0' }}>
+              Loading weather...
+            </p>
+          )}
+        </div>
+
         {/* Last.fm Now Playing / Last Played */}
         <div className="bento-card span-2">
           <div className="label">
@@ -749,102 +894,111 @@ export default function SebastianPortfolio() {
           )}
         </div>
 
-        {/* Clock */}
-        <div className="bento-card span-2">
-          <div className="label">Current Time</div>
-          <div className="metric" style={{ fontSize: '48px' }}>
-            {currentTime.toLocaleTimeString('en-US', { 
-              hour: '2-digit', 
-              minute: '2-digit',
-              hour12: false 
-            })}
+        {/* Languages & Skills */}
+        <div className="bento-card span-2 row-3-small">
+          <div className="label">Languages & Skills</div>
+          <div style={{ flex: 1, overflow: 'auto', paddingTop: '20px' }}>
+            <div className="skill-item">
+              <div className="skill-name">Python</div>
+              <div className="skill-level">Proficient</div>
+            </div>
+            <div className="skill-item">
+              <div className="skill-name">JavaScript</div>
+              <div className="skill-level">Proficient</div>
+            </div>
+            <div className="skill-item">
+              <div className="skill-name">React</div>
+              <div className="skill-level">Intermediate</div>
+            </div>
+            <div className="skill-item">
+              <div className="skill-name">HTML & CSS</div>
+              <div className="skill-level">Proficient</div>
+            </div>
           </div>
-          <p style={{ fontSize: '14px', color: '#a3a3a3', marginTop: '8px' }}>
-            {currentTime.toLocaleDateString('en-US', { 
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric'
-            })}
+        </div>
+
+        {/* About Me */}
+        <div className="bento-card span-4 row-3-small">
+          <div className="label">About Me</div>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column'}}>
+            <div>
+              <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#171717', marginBottom: '8px' }}>
+                Who I Am
+              </h3>
+              <p style={{ fontSize: '16px', color: '#525252', lineHeight: '1.6' }}>
+                I'm a Grade 11 IB (International Baccalaureate 🤕) student at Merivale High School in Ottawa with a passion for technology and problem-solving. 
+                You'll usually find me cubing, writing, doing homework, watching youtube, or coding!
+              </p>
+            </div>
+            <div>
+              <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#171717', marginBottom: '8px' }}>
+                Interests
+              </h3>
+              <p style={{ fontSize: '16px', color: '#525252', lineHeight: '1.6' }}>
+                Speedcubing, Problem Solving, Math, Studio Ghibli, Photography and Creative Writing
+              </p>
+            </div>
+            <div>
+              <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#171717', marginBottom: '8px' }}>
+                Currently
+              </h3>
+              <p style={{ fontSize: '16px', color: '#525252', lineHeight: '1.6' }}>
+                Building web applications with React (this website!), learning rubik's cube algorithms (COLL), exploring new things, (probably) listening to music.
+              </p>
+            </div>
+          </div>
+        </div>
+        {/* Resume Download */}
+        <div className="bento-card span-2 bottom-row">
+          <div className="label">Resume</div>
+          <button className="download-btn" onClick={() => alert('Add your resume PDF link here!')}>
+            <div className="download-icon">📄</div>
+            <div>Download Resume</div>
+          </button>
+        </div>
+
+        {/* Fun Fact / Quote */}
+        <div className="bento-card span-2 bottom-row">
+          <div className="label">Quote</div>
+          <p style={{ 
+            fontSize: '18px', 
+            color: '#171717', 
+            fontStyle: 'italic',
+            margin: 'auto 0',
+            textAlign: 'center',
+            lineHeight: '1.5'
+          }}>
+            "The only way to do great work is to love what you do."
+          </p>
+          <p style={{ 
+            fontSize: '12px', 
+            color: '#a3a3a3',
+            textAlign: 'center',
+            marginTop: '8px'
+          }}>
+            — Steve Jobs
           </p>
         </div>
 
-        {/* Interests */}
-        <div className="bento-card span-2">
-          <div className="label">Interests</div>
+        {/* Year Progress or Contact */}
+        <div className="bento-card span-2 bottom-row">
+          <div className="label">Get In Touch</div>
           <p style={{ 
             fontSize: '16px', 
-            color: '#a3a3a3', 
-            fontStyle: 'italic',
-            margin: 'auto 0'
+            color: '#525252', 
+            margin: 'auto 0',
+            textAlign: 'center'
           }}>
-            Add your interests here...
+            swuott2009@gmail.com
           </p>
-        </div>
-
-        {/* Skills */}
-        <div className="bento-card span-2">
-          <div className="label">Skills</div>
           <p style={{ 
-            fontSize: '16px', 
-            color: '#a3a3a3', 
-            fontStyle: 'italic',
-            margin: 'auto 0'
+            fontSize: '13px', 
+            color: '#a3a3a3',
+            textAlign: 'center',
+            marginTop: '8px'
           }}>
-            Add your skills here...
+            Open to opportunities
           </p>
-        </div>
-
-        {/* Todo List */}
-        <div className="bento-card span-3 row-2">
-          <div className="label">Goals & To-Do</div>
-          <div style={{ flex: 1, overflow: 'auto' }}>
-            {todos.map(todo => (
-              <div 
-                key={todo.id} 
-                className="todo-item"
-                onClick={() => toggleTodo(todo.id)}
-              >
-                {todo.done ? (
-                  <CheckCircle2 size={20} className="todo-icon done" />
-                ) : (
-                  <Circle size={20} className="todo-icon" />
-                )}
-                <span className={`todo-text ${todo.done ? 'done' : ''}`}>
-                  {todo.text}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Cubing - Combined Card */}
-        <div className="bento-card span-3 row-2">
-          <div className="label">Speedcubing</div>
-          <div className="cubing-stats">
-            <div className="stat-card">
-              <div className="stat-label">Today's Solves</div>
-              <div className="stat-value">{solvesToday}</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Algs Learned</div>
-              <div className="stat-value">{algProgress.learned}</div>
-              <div style={{ fontSize: '11px', color: '#a3a3a3', marginTop: '4px' }}>
-                / {algProgress.total} {algProgress.type}
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Avg Solve</div>
-              <div style={{ fontSize: '18px', color: '#a3a3a3', fontStyle: 'italic', marginTop: '8px' }}>
-                Connect csTimer...
-              </div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Personal Best</div>
-              <div style={{ fontSize: '18px', color: '#a3a3a3', fontStyle: 'italic', marginTop: '8px' }}>
-                Add your PB...
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
