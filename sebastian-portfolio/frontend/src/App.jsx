@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Github, Linkedin, Instagram, Hash, Camera, ArrowDownToLine } from 'lucide-react';
+import { Github, Linkedin, Instagram, Hash, Camera, ArrowDownToLine, Sun, CloudSnow, CloudRain, CloudSun, CloudLightning } from 'lucide-react';
 import TimeTravelSlider from './components/TimeTravelSlider';
 import KonamiShatter from './components/KonamiShatter';
 import Photography from './components/Photography';
@@ -66,13 +66,18 @@ export default function SebastianPortfolio() {
     return () => clearInterval(interval);
   }, []);
 
-  const getWeatherEmoji = (code) => {
-    if (code === 0) return '☀️';
-    if (code <= 3) return '⛅';
-    if (code <= 67) return '🌧️';
-    if (code <= 77) return '🌨️';
-    if (code <= 99) return '⛈️';
-    return '🌤️';
+  const getWeatherIcon = (code) => {
+    const iconProps = {
+      size: '64px',
+      strokeWidth: 1.5,
+      color: '#171717'
+    }
+    if (code === 0) return <Sun {...iconProps} />;
+    if (code <= 3) return <CloudSun {...iconProps} />;
+    if (code <= 67) return <CloudRain {...iconProps} />;
+    if (code <= 77) return <CloudSnow {...iconProps} />;
+    if (code <= 99) return <CloudLightning {...iconProps} />;
+    return <CloudSun {...iconProps} />;
   };
 
   useEffect(() => {
@@ -213,7 +218,7 @@ export default function SebastianPortfolio() {
               {weather ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
                   <div style={{ fontSize: '64px', lineHeight: 1 }}>
-                    {getWeatherEmoji(weather.code)}
+                    {getWeatherIcon(weather.code)}
                   </div>
                   <div>
                     <div className="metric" style={{ fontSize: '56px' }}>

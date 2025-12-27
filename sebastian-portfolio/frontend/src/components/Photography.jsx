@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
+
 // Masonry grid layout inspiration from:
 // - Flowbite Tailwind CSS Gallery: https://flowbite.com/docs/components/gallery/
 // - CSS Grid masonry techniques from various sources
@@ -10,20 +11,8 @@ const Photography = ({ isOpen, onClose }) => {
   const [selectedIndex, setSelectedIndex] = useState(null);
 
   // Replace these placeholder URLs with your actual photo URLs
-  const photos = [
-    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800',
-    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800',
-    'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800',
-    'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=800',
-    'https://images.unsplash.com/photo-1511593358241-7eea1f3c84e5?w=800',
-    'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=800',
-    'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=800',
-    'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800',
-    'https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=800',
-    'https://images.unsplash.com/photo-1475924156734-496f6cac6ec1?w=800',
-    'https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800',
-    'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=800',
-  ];
+  const importAll = (r) => r.keys().map(r);
+  const photos = importAll(require.context('../assets/photos', false, /\.(png|JPG|jpe?g|svg)$/));
 
   const openImage = (photo, index) => {
     setSelectedImage(photo);
