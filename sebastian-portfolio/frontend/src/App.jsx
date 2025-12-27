@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Github, Linkedin, Instagram, Hash, Camera, ArrowDownToLine, Sun, CloudSnow, CloudRain, CloudSun, CloudLightning } from 'lucide-react';
+import { Github, Linkedin, Instagram, Hash, Camera, ArrowDownToLine, Sun, CloudSun, CloudRain, CloudSnow, CloudLightning, Menu } from 'lucide-react';
 import TimeTravelSlider from './components/TimeTravelSlider';
 import KonamiShatter from './components/KonamiShatter';
 import Photography from './components/Photography';
+import Navigation from './components/Navigation';
 import './styles/main.css';
 import backgroundImage from "./components/background_img.jpg"
 
@@ -13,6 +14,7 @@ export default function SebastianPortfolio() {
   const [weather, setWeather] = useState(null);
   const [isShattered, setIsShattered] = useState(false);
   const [isPhotographyOpen, setIsPhotographyOpen] = useState(false);
+  const [isNavigationOpen, setIsNavigationOpen] = useState(false);
 
   // Fetch Last.fm data
   useEffect(() => {
@@ -67,11 +69,7 @@ export default function SebastianPortfolio() {
   }, []);
 
   const getWeatherIcon = (code) => {
-    const iconProps = {
-      size: '64px',
-      strokeWidth: 1.5,
-      color: '#171717'
-    }
+    const iconProps = { size: 64, strokeWidth: 1.5, color: '#171717' };
     if (code === 0) return <Sun {...iconProps} />;
     if (code <= 3) return <CloudSun {...iconProps} />;
     if (code <= 67) return <CloudRain {...iconProps} />;
@@ -115,15 +113,16 @@ export default function SebastianPortfolio() {
                 fontSize: '56px', 
                 fontWeight: '800', 
                 lineHeight: '1.1', 
-                marginTop: '35px',
+                marginBottom: '8px',
+                marginTop: '5px',
                 color: '#171717',
                 letterSpacing: '-0.03em'
               }}>
                 Sebastian Wu
               </h1>
               <p style={{ 
-                marginTop: '18px',
-                marginBottom: '-10px',
+                marginTop: '20px',
+                marginBottom: '10px',
                 fontSize: '18px', 
                 color: '#737373', 
                 fontWeight: '400'
@@ -203,7 +202,7 @@ export default function SebastianPortfolio() {
                   hour12: false 
                 })}
               </div>
-              <p style={{ fontSize: '14px', color: '#000000ff', marginTop: '8px' }}>
+              <p style={{ fontSize: '14px', color: '#a3a3a3', marginTop: '8px' }}>
                 {currentTime.toLocaleDateString('en-US', { 
                   weekday: 'long',
                   month: 'long',
@@ -217,7 +216,7 @@ export default function SebastianPortfolio() {
               <div className="label">Weather in Ottawa</div>
               {weather ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
-                  <div style={{ fontSize: '64px', lineHeight: 1 }}>
+                  <div>
                     {getWeatherIcon(weather.code)}
                   </div>
                   <div>
@@ -324,7 +323,6 @@ export default function SebastianPortfolio() {
                   </h3>
                   <p style={{ fontSize: '16px', color: '#525252', lineHeight: '2', marginTop: '5px' }}>
                     Building web applications with React (this website!), learning rubik's cube algorithms (COLL), exploring new things, (probably) listening to music.
-                    (add other stuff)
                   </p>
                 </div>
               </div>
@@ -392,25 +390,27 @@ export default function SebastianPortfolio() {
             </div>
 
 
-            {/* Contact */}
-            <div className="bento-card span-2">
-              <div className="label">Get In Touch</div>
-              <p style={{ 
-                fontSize: '16px', 
-                color: '#000000ff', 
-                margin: 'auto 0',
-                textAlign: 'center'
+            {/* Photography Card */}
+            <div 
+              className="bento-card span-2"
+              onClick={() => setIsNavigationOpen(true)}
+              style={{ 
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              <div className="label">Menu</div>
+              <div style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: '12px'
               }}>
-                swuott2009@gmail.com
-              </p>
-              <p style={{ 
-                fontSize: '13px', 
-                color: '#000000ff',
-                textAlign: 'center',
-                marginTop: '8px'
-              }}>
-                Open to opportunities
-              </p>
+                <Menu size={48} style={{ color: '#171717' }} />
+              </div>
             </div>
           </div>
         </div>
@@ -420,6 +420,12 @@ export default function SebastianPortfolio() {
       <Photography 
         isOpen={isPhotographyOpen} 
         onClose={() => setIsPhotographyOpen(false)} 
+      />
+
+      {/* Navigation Modal */}
+      <Navigation 
+        isOpen={isNavigationOpen} 
+        onClose={() => setIsNavigationOpen(false)} 
       />
     </>
   );
