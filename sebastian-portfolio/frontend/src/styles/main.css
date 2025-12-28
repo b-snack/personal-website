@@ -52,11 +52,10 @@ body {
 .bento-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-  border-color: rgba(212, 212, 212, 0.8);
-  background: rgba(255, 255, 255, 0.65); /* Slightly more opaque on hover */
+  border: 2px solid #171717;
+  background: rgba(255, 255, 255, 0.65);
 }
-
-
+/* 
 .bento-card::before {
   content: '';
   position: absolute;
@@ -64,10 +63,10 @@ body {
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+  background: #171717;
   opacity: 0;
   transition: opacity 0.3s;
-}
+} */
 
 .bento-card:hover::before {
   opacity: 1;

@@ -1,6 +1,7 @@
-import { X, Camera, Book, Pen, Film, Music, GraduationCap } from 'lucide-react';
+import { X, Box, Camera, Book, Pen, Film, Music, GraduationCap } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const Navigation = ({ isOpen, onClose }) => {
+const Navigation = ({ isOpen, onClose, onCubingClick, onPhotographyClick }) => {
   if (!isOpen) return null;
 
   return (
@@ -56,6 +57,10 @@ const Navigation = ({ isOpen, onClose }) => {
       }}>
         {/* Photography */}
         <div
+          onClick={() => {
+            onClose();
+            if (onPhotographyClick) onPhotographyClick();
+          }}
           style={{
             cursor: 'pointer',
             padding: '24px',
@@ -78,6 +83,37 @@ const Navigation = ({ isOpen, onClose }) => {
           <Camera size={48} style={{ color: '#171717' }} />
           <span style={{ fontSize: '14px', fontWeight: '500', color: '#525252' }}>
             Photography
+          </span>
+        </div>
+
+        {/* Cubing */}
+        <div
+          onClick={() => {
+            onClose();
+            if (onCubingClick) onCubingClick();
+          }}
+          style={{
+            cursor: 'pointer',
+            padding: '24px',
+            borderRadius: '16px',
+            transition: 'all 0.3s',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#f5f5f5';
+            e.currentTarget.style.transform = 'translateY(-4px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <Box size={48} style={{ color: '#171717' }} />
+          <span style={{ fontSize: '14px', fontWeight: '500', color: '#525252' }}>
+            Cubing
           </span>
         </div>
 
@@ -132,33 +168,6 @@ const Navigation = ({ isOpen, onClose }) => {
           <Pen size={48} style={{ color: '#171717' }} />
           <span style={{ fontSize: '14px', fontWeight: '500', color: '#525252' }}>
             Writing
-          </span>
-        </div>
-
-        {/* Movies */}
-        <div
-          style={{
-            cursor: 'pointer',
-            padding: '24px',
-            borderRadius: '16px',
-            transition: 'all 0.3s',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '12px'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f5f5f5';
-            e.currentTarget.style.transform = 'translateY(-4px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <Film size={48} style={{ color: '#171717' }} />
-          <span style={{ fontSize: '14px', fontWeight: '500', color: '#525252' }}>
-            Movies
           </span>
         </div>
 

@@ -12,7 +12,7 @@ const Photography = ({ isOpen, onClose }) => {
 
   // Replace these placeholder URLs with your actual photo URLs
   const importAll = (r) => r.keys().map(r);
-  const photos = importAll(require.context('../assets/photos', false, /\.(png|JPG|jpe?g|svg)$/));
+  const photos = importAll(require.context('../../public/assets/photos', false, /\.(png|JPG|jpe?g|svg)$/));
 
   const openImage = (photo, index) => {
     setSelectedImage(photo);
