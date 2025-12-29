@@ -4,6 +4,7 @@ import TimeTravelSlider from './components/TimeTravelSlider';
 import KonamiShatter from './components/KonamiShatter';
 import Photography from './components/Photography';
 import Navigation from './components/Navigation';
+import Guestbook from './components/Guestbook';
 import Cubing from './components/Cubing'
 import './styles/main.css';
 import backgroundImage from "./components/background_img.jpg"
@@ -16,7 +17,8 @@ export default function SebastianPortfolio() {
   const [isShattered, setIsShattered] = useState(false);
   const [isPhotographyOpen, setIsPhotographyOpen] = useState(false);
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState('home')
+  const [currentPage, setCurrentPage] = useState('home');
+  const [isGuestbookOpen, setIsGuestbookOpen] = useState(false);
 
   // Fetch Last.fm data
   useEffect(() => {
@@ -425,6 +427,12 @@ export default function SebastianPortfolio() {
             </div>
           </div>
         </div>
+        
+        {/* Guestbook Modal */}
+        <Guestbook
+          isOpen={isGuestbookOpen} 
+          onClose={() => setIsGuestbookOpen(false)} 
+        />
 
         {/* Photography Modal */}
         <Photography 
@@ -437,7 +445,9 @@ export default function SebastianPortfolio() {
           isOpen={isNavigationOpen} 
           onClose={() => setIsNavigationOpen(false)} 
           onCubingClick={() => setCurrentPage('cubing')}
+          onGuestbookClick={() => setIsGuestbookOpen(true)}
           onPhotographyClick={() => setIsPhotographyOpen(true)}
+        />
         />
       </>
       )}
