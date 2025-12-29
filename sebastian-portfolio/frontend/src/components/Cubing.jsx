@@ -292,9 +292,6 @@ const Cubing = ({ onBack }) => {
             <p style={{ fontSize: '18px', color: '#ef4444', fontWeight: '600' }}>
               Error loading data
             </p>
-            <p style={{ fontSize: '14px', color: '#737373' }}>
-              Make sure CSTimer.txt is in /public/assets/cubing/
-            </p>
           </div>
         ) : (
           // Bento Grid with stats

@@ -1,7 +1,7 @@
-import { X, Box, Camera, Book, Pen, Film, Music, GraduationCap } from 'lucide-react';
+import { X, Box, Camera, Book, Pen, Film, Music, GraduationCap, BookIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const Navigation = ({ isOpen, onClose, onCubingClick, onPhotographyClick }) => {
+const Navigation = ({ isOpen, onClose, onCubingClick, onGuestbookClick }) => {
   if (!isOpen) return null;
 
   return (
@@ -55,11 +55,11 @@ const Navigation = ({ isOpen, onClose, onCubingClick, onPhotographyClick }) => {
         gap: '48px',
         padding: '40px'
       }}>
-        {/* Photography */}
+        {/* Guestbook */}
         <div
           onClick={() => {
             onClose();
-            if (onPhotographyClick) onPhotographyClick();
+            if (onGuestbookClick) onGuestbookClick();
           }}
           style={{
             cursor: 'pointer',
@@ -80,9 +80,9 @@ const Navigation = ({ isOpen, onClose, onCubingClick, onPhotographyClick }) => {
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <Camera size={48} style={{ color: '#171717' }} />
+          <Book size={48} style={{ color: '#171717' }} />
           <span style={{ fontSize: '14px', fontWeight: '500', color: '#525252' }}>
-            Photography
+            Guestbook
           </span>
         </div>
 
