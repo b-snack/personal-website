@@ -244,7 +244,7 @@ const Cubing = ({ onBack }) => {
     </button> */}
 
       {/* Content */}
-      <div style={{ maxWidth: '1200px', margin: '0 auto', paddingTop: '40px' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', paddingTop: '25px', paddingBottom: '25px', paddingRight: '20px', paddingLeft: '20px' }}>
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
