@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Github, Linkedin, Instagram, Hash, Camera, ArrowDownToLine, Sun, CloudSun, CloudRain, CloudSnow, CloudLightning, Menu } from 'lucide-react';
+import { Github, Linkedin, Instagram, Hash, Camera, ArrowDownToLine, Sun, CloudSun, CloudRain, CloudSnow, CloudLightning, Menu, Link } from 'lucide-react';
 import TimeTravelSlider from './components/TimeTravelSlider';
 import KonamiShatter from './components/KonamiShatter';
 import Photography from './components/Photography';
@@ -48,6 +48,11 @@ export default function SebastianPortfolio() {
     const interval = setInterval(fetchLastfm, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // new tab
+  const openResume = (example) => {
+    window.open(example, 'blank');
+  };
 
   // Fetch Weather data
   useEffect(() => {
@@ -348,7 +353,7 @@ export default function SebastianPortfolio() {
                   flexDirection: 'column',
                   cursor: 'pointer'
                 }}
-                onClick={() => alert('Add your resume PDF link here!')}
+                onClick={ () => openResume('https://docs.google.com/document/d/1alz-WEsDzgQVmLMGoRvliPkXLXlZrpDz1tEMnbIfyQQ/edit?usp=sharing')}
               >
                 <div className="label">Resume</div>
                 <div style={{
@@ -365,7 +370,7 @@ export default function SebastianPortfolio() {
                     color: '#525252',
                     fontWeight: '500'
                   }}>
-                    Download Resume
+                    View Resume
                   </p>
                 </div>
               </div>
@@ -447,7 +452,6 @@ export default function SebastianPortfolio() {
           onCubingClick={() => setCurrentPage('cubing')}
           onGuestbookClick={() => setIsGuestbookOpen(true)}
           onPhotographyClick={() => setIsPhotographyOpen(true)}
-        />
         />
       </>
       )}
