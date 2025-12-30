@@ -8,6 +8,17 @@ const Guestbook = ({ isOpen, onClose }) => {
   const [newMessage, setNewMessage] = useState({ name: '', message: '' })
   const [isLoading, setIsLoading] = useState(false);
 
+  const getUserId = () => {
+    let userId = localStorage.getItem('guestbook_user_id');
+    if (!userId) {
+      userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+      localStorage.setItem('guestbook_user_id', userId);
+    }
+    return userId
+  };
+
+  const [currentUserId] = useState(getUserId())
+
   useEffect(() => {
     if (isOpen) {
       fetchMessages();
@@ -51,6 +62,34 @@ const Guestbook = ({ isOpen, onClose }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleLike = async(messageId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/messages/${messageId}/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: currentUserId })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+
+      setMessages(prevMessages => prevMessages.map(msg => msg._id === messageId ? {
+              ...msg, likeCount: data.likeCount, likedBy: data.likedBy
+            } : msg
+        )
+      );
+    }
+    } catch (error) {
+      console.error("error liking message")
+    }
+  };
+
+  const isLikedByUser = (message) => {
+    return message.likedBy && message.likedBy.includes(currentUserId);
   };
 
   if (!isOpen) return null;
@@ -272,7 +311,37 @@ const Guestbook = ({ isOpen, onClose }) => {
                     })}
                   </div>
                 </div>
-                <Heart size={16} style={{ color: '#ef4444' }} />
+
+                {/* Like Button */}
+                <div
+                  onClick = {() => handleLike(msg._id)}
+                  style = {{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                    userSelect: 'none',
+                  }}
+                >
+                  <Heart 
+                    size={20} 
+                    style={{ 
+                      color: '#ef4444', 
+                      fill: isLikedByUser(msg) ? '#ef4444': 'transparent ',
+                      transition: 'all 0.2s',
+                      transform: isLikedByUser(msg) ? 'scale(1.1)' : 'scale(1)'
+                    }} 
+                  />
+                  {msg.likeCount > 0 && (
+                    <span style = {{
+                      fontSize: '13px',
+                      color: '#737373',
+                      fontWeight: '500'
+                    }}>
+                      {msg.likeCount}
+                    </span>
+                  )}
+                </div>
               </div>
               <p style={{
                 fontSize: '15px',

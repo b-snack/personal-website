@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -11,7 +12,6 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB Connection
-// Replace with your MongoDB URI
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio';
 
 mongoose.connect(MONGODB_URI, {
@@ -22,22 +22,6 @@ mongoose.connect(MONGODB_URI, {
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Schemas
-const messageSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    default: 'Anonymous',
-    maxlength: 50
-  },
-  message: {
-    type: String,
-    required: true,
-    maxlength: 200
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-});
 
 const snapshotSchema = new mongoose.Schema({
   date: {
@@ -54,8 +38,42 @@ const snapshotSchema = new mongoose.Schema({
   }
 });
 
+
+// guestbook schema
+const messageSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 50
+  },
+  message: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 500
+  },
+  timestamp: {
+    type: Date,
+    default: Date.now
+  },
+  // NEW: Array of user IDs who liked this message
+  likedBy: {
+    type: [String],  // Array of strings (user identifiers)
+    default: []
+  },
+  // NEW: Total like count (for faster queries)
+  likeCount: {
+    type: Number,
+    default: 0
+  }
+});
+
+
 const Message = mongoose.model('Message', messageSchema);
 const Snapshot = mongoose.model('Snapshot', snapshotSchema);
+
+
 
 // Routes
 
@@ -135,6 +153,76 @@ app.delete('/api/snapshots/cleanup', async (req, res) => {
   }
 });
 
+// Like system (by claude -> im still learning this)
+app.post('/api/messages/:id/like', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId } = req.body;  // User identifier from frontend
+    
+    // Validation
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    // Find the message
+    const message = await Message.findById(id);
+    
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    // Check if user already liked this message
+    const alreadyLiked = message.likedBy.includes(userId);
+    
+    if (alreadyLiked) {
+      // UNLIKE: Remove user from likedBy array
+      message.likedBy = message.likedBy.filter(id => id !== userId);
+      message.likeCount = message.likedBy.length;
+      console.log(`💔 User ${userId} unliked message ${id}`);
+    } else {
+      // LIKE: Add user to likedBy array
+      message.likedBy.push(userId);
+      message.likeCount = message.likedBy.length;
+      console.log(`❤️ User ${userId} liked message ${id}`);
+    }
+
+    await message.save();
+    
+    res.json({
+      liked: !alreadyLiked,  // Return new like status
+      likeCount: message.likeCount,
+      likedBy: message.likedBy
+    });
+    
+  } catch (error) {
+    console.error('Error toggling like:', error);
+    res.status(500).json({ error: 'Failed to toggle like' });
+  }
+});
+
+// Get like status for a specific user
+app.get('/api/messages/:id/like/:userId', async (req, res) => {
+  try {
+    const { id, userId } = req.params;
+    
+    const message = await Message.findById(id);
+    
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    const liked = message.likedBy.includes(userId);
+    
+    res.json({
+      liked,
+      likeCount: message.likeCount
+    });
+    
+  } catch (error) {
+    console.error('Error checking like status:', error);
+    res.status(500).json({ error: 'Failed to check like status' });
+  }
+});
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date() });
