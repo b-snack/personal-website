@@ -1,4 +1,4 @@
-import { X, Box, Camera, Book, Pen, Film, Music, GraduationCap, BookIcon } from 'lucide-react';
+import { X, Box, Book, Music, PenBoxIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Navigation = ({ isOpen, onClose, onCubingClick, onGuestbookClick, onBlogClick }) => {
@@ -51,7 +51,7 @@ const Navigation = ({ isOpen, onClose, onCubingClick, onGuestbookClick, onBlogCl
       {/* Navigation Icons Grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
+        gridTemplateColumns: 'repeat(2, 1fr)',
         gap: '48px',
         padding: '40px'
       }}>
@@ -142,7 +142,7 @@ const Navigation = ({ isOpen, onClose, onCubingClick, onGuestbookClick, onBlogCl
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <Book size={48} style={{ color: '#171717' }} />
+          <PenBoxIcon size={48} style={{ color: '#171717' }} />
           <span style={{ fontSize: '14px', fontWeight: '500', color: '#525252' }}>
             Blogs
           </span>
@@ -172,33 +172,6 @@ const Navigation = ({ isOpen, onClose, onCubingClick, onGuestbookClick, onBlogCl
           <Music size={48} style={{ color: '#171717' }} />
           <span style={{ fontSize: '14px', fontWeight: '500', color: '#525252' }}>
             Music
-          </span>
-        </div>
-
-        {/* Academics */}
-        <div
-          style={{
-            cursor: 'pointer',
-            padding: '24px',
-            borderRadius: '16px',
-            transition: 'all 0.3s',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '12px'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f5f5f5';
-            e.currentTarget.style.transform = 'translateY(-4px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <GraduationCap size={48} style={{ color: '#171717' }} />
-          <span style={{ fontSize: '14px', fontWeight: '500', color: '#525252' }}>
-            Academics
           </span>
         </div>
       </div>
