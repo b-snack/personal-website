@@ -8,6 +8,7 @@ import Guestbook from './components/Guestbook';
 import Cubing from './components/Cubing'
 import './styles/main.css';
 import backgroundImage from "./components/background_img.jpg"
+import Blog from './components/Blog';
 
 export default function SebastianPortfolio() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -19,6 +20,7 @@ export default function SebastianPortfolio() {
   const [isNavigationOpen, setIsNavigationOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
   const [isGuestbookOpen, setIsGuestbookOpen] = useState(false);
+  const [isBlogOpen, setIsBlogOpen] = useState(false);
 
   // Fetch Last.fm data
   useEffect(() => {
@@ -97,6 +99,12 @@ export default function SebastianPortfolio() {
       {
         currentPage === 'cubing' && (
           <Cubing onBack={() => setCurrentPage('home')} />
+        )
+      }
+
+      {
+        currentPage === 'blog' && (
+          <Blog onBack={() => setCurrentPage('home')} />
         )
       }
 
@@ -452,6 +460,7 @@ export default function SebastianPortfolio() {
           onCubingClick={() => setCurrentPage('cubing')}
           onGuestbookClick={() => setIsGuestbookOpen(true)}
           onPhotographyClick={() => setIsPhotographyOpen(true)}
+          onBlogClick = {() => setCurrentPage('blog')}
         />
       </>
       )}

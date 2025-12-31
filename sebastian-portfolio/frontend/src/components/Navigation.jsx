@@ -1,7 +1,7 @@
 import { X, Box, Camera, Book, Pen, Film, Music, GraduationCap, BookIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const Navigation = ({ isOpen, onClose, onCubingClick, onGuestbookClick }) => {
+const Navigation = ({ isOpen, onClose, onCubingClick, onGuestbookClick, onBlogClick }) => {
   if (!isOpen) return null;
 
   return (
@@ -117,8 +117,12 @@ const Navigation = ({ isOpen, onClose, onCubingClick, onGuestbookClick }) => {
           </span>
         </div>
 
-        {/* Reading */}
+        {/* Writing / Blog */}
         <div
+          onClick = {() => {
+            onClose();
+            if (onBlogClick) onBlogClick()
+          }}
           style={{
             cursor: 'pointer',
             padding: '24px',
@@ -140,34 +144,7 @@ const Navigation = ({ isOpen, onClose, onCubingClick, onGuestbookClick }) => {
         >
           <Book size={48} style={{ color: '#171717' }} />
           <span style={{ fontSize: '14px', fontWeight: '500', color: '#525252' }}>
-            Reading
-          </span>
-        </div>
-
-        {/* Writing */}
-        <div
-          style={{
-            cursor: 'pointer',
-            padding: '24px',
-            borderRadius: '16px',
-            transition: 'all 0.3s',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '12px'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = '#f5f5f5';
-            e.currentTarget.style.transform = 'translateY(-4px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <Pen size={48} style={{ color: '#171717' }} />
-          <span style={{ fontSize: '14px', fontWeight: '500', color: '#525252' }}>
-            Writing
+            Blogs
           </span>
         </div>
 
