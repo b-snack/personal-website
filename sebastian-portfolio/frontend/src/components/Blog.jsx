@@ -6,6 +6,7 @@ const Blog = ({ onBack }) => {
 
   const blogPosts = [
     {
+      //size is just set to large cuz im too lazy to remove it - shoudl be all the same size
       id: 1,
       title: "template",
       date: "Jan 1, 1375",

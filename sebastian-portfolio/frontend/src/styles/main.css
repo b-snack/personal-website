@@ -220,11 +220,11 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  transition: all 0.2s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   text-decoration: none;
   color: inherit;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05)
 }
 
 .social-link:hover {
@@ -253,7 +253,8 @@ body {
   margin-top: 2px;
 }
 
-/* Skills */.skill-item {
+/* Skills */
+.skill-item {
   background: rgba(255, 255, 255, 0.4); /* More translucent */
   backdrop-filter: blur(12px) saturate(200%); /* More blur */
   -webkit-backdrop-filter: blur(12px) saturate(200%);
@@ -261,7 +262,7 @@ body {
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
-  transition: all 0.2s;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -380,16 +381,40 @@ body {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: scale(0.95)
   }
   to {
     opacity: 1;
+    transform: scale(1)
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* Banner slide animation */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
     transform: translateY(0);
+    opacity: 1;
   }
 }
 
 .bento-card {
   animation: fadeIn 0.5s ease-out backwards;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .bento-card:nth-child(1) { animation-delay: 0.05s; }

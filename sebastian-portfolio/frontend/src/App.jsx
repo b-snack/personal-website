@@ -9,6 +9,12 @@ import Cubing from './components/Cubing'
 import './styles/main.css';
 import backgroundImage from "./components/background_img.jpg"
 import Blog from './components/Blog';
+import { firstSnapshot } from './snapshots/v1-early';
+import { secondSnapshot } from './snapshots/v2-early';
+import { thirdSnapshot } from './snapshots/v3-early';
+import { fourthSnapshot } from './snapshots/v4-current';
+
+const SNAPSHOTS = [ firstSnapshot, secondSnapshot, thirdSnapshot, fourthSnapshot ]
 
 export default function SebastianPortfolio() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -21,6 +27,9 @@ export default function SebastianPortfolio() {
   const [currentPage, setCurrentPage] = useState('home');
   const [isGuestbookOpen, setIsGuestbookOpen] = useState(false);
   const [isBlogOpen, setIsBlogOpen] = useState(false);
+  const [activeSnapshotIndex, setActiveSnapshotIndex] = useState(3);
+  const activeSnapshot = SNAPSHOTS[activeSnapshotIndex];
+  const isViewingPast = activeSnapshotIndex <3;
 
   // Fetch Last.fm data
   useEffect(() => {
@@ -110,20 +119,29 @@ export default function SebastianPortfolio() {
 
       {currentPage === 'home' &&(
         <>
-        <KonamiShatter isShattered={isShattered} setIsShattered={setIsShattered} />
-        <div style ={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          zIndex: -1
-        }}/>    
-        <div className="min-h-screen py-16 px-8 relative" style={{ paddingBottom: '60px' }}>
+
+{/* konami code */}
+        {activeSnapshot.features.konami && (
+          <KonamiShatter isShattered={isShattered} setIsShattered={setIsShattered} />
+        )}
+
+        {activeSnapshot.styling.hasBackgroundImage && (
+          <div style = {{
+            position:'fixed',
+            top:0,
+            left:0,
+            width:'100%',
+            height:'100%',
+            backgroundImage: `url(${backgroundImage})`,
+            backgroundSize:'cover',
+            backgroundPosition:'center',
+            backgroundRepeat:'no-repeat',
+            zIndex:-1
+          }}/>
+        )}
+        
+        <div className='min-h-screen py-16 px-8 relative' style={{ paddingBottom: '60px' }}>
+
           <div className="bento-wrapper">
             
             <div className="bento-container">
@@ -143,7 +161,7 @@ export default function SebastianPortfolio() {
                   color: '#171717',
                   letterSpacing: '-0.03em'
                 }}>
-                  Sebastian Wu
+                  {activeSnapshot.hero.name}
                 </h1>
                 <p style={{ 
                   marginTop: '20px',
@@ -152,7 +170,7 @@ export default function SebastianPortfolio() {
                   color: '#737373', 
                   fontWeight: '400'
                 }}>
-                  Grade 11 IB Student @ MHS, Ottawa
+                  {activeSnapshot.hero.subtitle}
                 </p>
               </div>
                 
@@ -214,7 +232,11 @@ export default function SebastianPortfolio() {
 
               {/* Time Travel Slider - replaces tree */}
               <div className="bento-card span-2 row-2">
-                <TimeTravelSlider />
+                <TimeTravelSlider 
+                  snapshots={SNAPSHOTS}
+                  activeIndex={activeSnapshotIndex}
+                  onSnapshotChange={setActiveSnapshotIndex}
+                />
               </div>
 
               {/* Clock */}
@@ -298,26 +320,12 @@ export default function SebastianPortfolio() {
               <div className="bento-card span-2 row-3">
                 <div className="label">Languages & Skills</div>
                 <div style={{ flex: 1, overflow: 'auto', paddingTop: '20px' }}>
-                  <div className="skill-item">
-                    <div className="skill-name">Python</div>
-                    <div className="skill-level">Proficient</div>
-                  </div>
-                  <div className="skill-item">
-                    <div className="skill-name">HTML</div>
-                    <div className="skill-level">Proficient</div>
-                  </div>
-                  <div className="skill-item">
-                    <div className="skill-name">CSS</div>
-                    <div className="skill-level">Proficient</div>
-                  </div>
-                  <div className="skill-item">
-                    <div className="skill-name">JavaScript</div>
-                    <div className="skill-level">Proficient</div>
-                  </div>
-                  <div className="skill-item">
-                    <div className="skill-name">React</div>
-                    <div className="skill-level">Intermediate</div>
-                  </div>
+                  {activeSnapshot.skills.map((skill, index) => (
+                    <div className="skill-item" key={index}>
+                      <div className="skill-name">{skill.name}</div>
+                      <div className="skill-level">{skill.level}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -325,31 +333,16 @@ export default function SebastianPortfolio() {
               <div className="bento-card span-4 row-3">
                 <div className="label">About Me</div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '45px' }}>
-                  <div>
-                    <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#171717', marginBottom: '10px', marginTop: '10px' }}>
-                      Who I Am
-                    </h3>
-                    <p style={{ fontSize: '16px', color: '#525252', lineHeight: '2' }}>
-                      I'm a Grade 11 IB (International Baccalaureate 🤕) student at Merivale High School in Ottawa with a passion for technology and problem-solving. 
-                      You'll usually find me cubing, writing, doing homework, watching youtube, or coding!
-                    </p>
-                  </div>
-                  <div>
-                    <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#171717', marginTop: '-20px', marginBottom: '5px' }}>
-                      Interests
-                    </h3>
-                    <p style={{ fontSize: '16px', color: '#525252', lineHeight: '2' }}>
-                      Speedcubing, Problem Solving, Math, Studio Ghibli, Photography and Creative Writing
-                    </p>
-                  </div>
-                  <div>
-                    <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#171717', marginTop: '-20px', marginBottom: '5px' }}>
-                      Currently
-                    </h3>
-                    <p style={{ fontSize: '16px', color: '#525252', lineHeight: '2', marginTop: '5px' }}>
-                      Building web applications with React (this website!), learning rubik's cube algorithms (COLL), exploring new things, (probably) listening to music.
-                    </p>
-                  </div>
+                  {activeSnapshot.aboutSections.map((section, index) => (
+                    <div key={index}>
+                      <h3 style={{ fontSize: '24px', fontWeight: '700', color: '#171717', marginBottom: '10px', marginTop: '10px' }}>
+                        {section.title}
+                      </h3>
+                      <p style={{ fontSize: '16px', color: '#525252', lineHeight: '2' }}>
+                        {section.content}
+                      </p>
+                    </div>
+                  ))}
                 </div>
               </div>
 
