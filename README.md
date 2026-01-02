@@ -34,7 +34,7 @@ A modern, interactive portfolio showcasing my projects, skills, and interests. F
 
 ## 🎯 Live Demo
 
-**[View Portfolio →](https://sebastian-portfolio.vercel.app)**
+**[View Portfolio →](sebastian-portfolio-gold.vercel.app)**
 
 ## 📦 Installation
 ```
