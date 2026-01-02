@@ -2,8 +2,6 @@
 
 A modern, interactive portfolio showcasing my projects, skills, and interests. Features a unique time-travel slider to explore different versions of the site over time.
 
-![Portfolio Banner](./banner.png)
-
 ## 🌟 Features
 
 - **Time Machine** - Slide through different versions of the portfolio to see how it evolved
